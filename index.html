@@ -273,6 +273,11 @@
             afkScreen.style.display = 'flex';
             startTime = Date.now();
             isRunning = true;
+
+            // Enter fullscreen mode
+            document.documentElement.requestFullscreen().catch(() => {
+                console.log('Fullscreen blocked by browser');
+            });
         }
 
         function backFromAFK() {
@@ -308,17 +313,6 @@
         });
 
         setInterval(updateTimer, 1000);
-
-        // Auto-trigger fullscreen on first user interaction
-        let hasTriedFullscreen = false;
-        document.addEventListener('click', function () {
-            if (!hasTriedFullscreen) {
-                hasTriedFullscreen = true;
-                document.documentElement.requestFullscreen().catch(() => {
-                    console.log('Fullscreen blocked by browser');
-                });
-            }
-        }, { once: true });
     </script>
 </body>
 
