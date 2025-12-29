@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,6 +41,7 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -53,9 +55,12 @@
         }
 
         @keyframes pulse {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: scale(1);
             }
+
             50% {
                 transform: scale(1.1);
             }
@@ -214,24 +219,17 @@
         }
     </style>
 </head>
+
 <body>
     <div class="setup-screen" id="setupScreen">
         <div class="container">
             <div class="title">Set Your AFK Status</div>
-            <input 
-                type="text" 
-                id="reasonInput" 
-                class="reason-input" 
-                placeholder="What are you doing?"
-                value="Getting some snacks"
-            >
+            <input type="text" id="reasonInput" class="reason-input" placeholder="What are you doing?"
+                value="Getting some snacks">
             <div class="preset-buttons">
-                <button class="preset-btn" onclick="setReason('Getting coffee ☕')">☕ Coffee</button>
-                <button class="preset-btn" onclick="setReason('Bathroom break 🚽')">🚽 Quick Break</button>
-                <button class="preset-btn" onclick="setReason('In a meeting 📞')">📞 Meeting</button>
-                <button class="preset-btn" onclick="setReason('Gaming 🎮')">🎮 Gaming</button>
-                <button class="preset-btn" onclick="setReason('Lunch time 🍔')">🍔 Lunch</button>
-                <button class="preset-btn" onclick="setReason('Going for a walk 🚶')">🚶 Walk</button>
+                <button class="preset-btn" onclick="setReason('Getting hot choccy ☕')">☕ Hot Choccy</button>
+                <button class="preset-btn" onclick="setReason('Pissin 🚽')">🚽 Pissin</button>
+                <button class="preset-btn" onclick="setReason('Smoke break 🚭')">🚭 Smoke break</button>
             </div>
             <button class="btn btn-primary btn-lg" id="goAfkBtn">GO AFK</button>
         </div>
@@ -258,7 +256,7 @@
         const backBtn = document.getElementById('backBtn');
         const reasonDisplay = document.getElementById('reasonDisplay');
         const timerDisplay = document.getElementById('timerDisplay');
-        
+
         let startTime = null;
         let isRunning = false;
 
@@ -286,12 +284,12 @@
 
         function updateTimer() {
             if (!isRunning || !startTime) return;
-            
+
             const elapsed = Math.floor((Date.now() - startTime) / 1000);
             const minutes = Math.floor(elapsed / 60);
             const seconds = elapsed % 60;
-            
-            timerDisplay.textContent = 
+
+            timerDisplay.textContent =
                 `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }
 
@@ -302,6 +300,18 @@
         });
 
         setInterval(updateTimer, 1000);
+
+        // Auto-trigger fullscreen on first user interaction
+        let hasTriedFullscreen = false;
+        document.addEventListener('click', function () {
+            if (!hasTriedFullscreen) {
+                hasTriedFullscreen = true;
+                document.documentElement.requestFullscreen().catch(() => {
+                    console.log('Fullscreen blocked by browser');
+                });
+            }
+        }, { once: true });
     </script>
 </body>
+
 </html>
