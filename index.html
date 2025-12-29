@@ -276,6 +276,13 @@
         }
 
         function backFromAFK() {
+            // Exit fullscreen if currently in fullscreen mode
+            if (document.fullscreenElement) {
+                document.exitFullscreen().catch(() => {
+                    console.log('Failed to exit fullscreen');
+                });
+            }
+
             afkScreen.style.display = 'none';
             setupScreen.style.display = 'flex';
             isRunning = false;
