@@ -2,9 +2,9 @@
 
 > A smart, feature-rich AFK (Away From Keyboard) tracker with AI-powered estimations, analytics, and gamification.
 
-**Live Demo:** [View on GitHub Pages](#) *(Update with your GitHub Pages URL)*
+**Live Demo:** [View on GitHub Pages](https://luinbytes.github.io/afk/)
 
-![AFK Tracker Banner](https://via.placeholder.com/1200x400/1a1a2e/ff6b6b?text=AFK+Status+Tracker)
+<img width="1024" height="434" alt="image" src="https://github.com/user-attachments/assets/e4d393e6-d2f7-4d42-a29d-22178dba3364" />
 
 ## Features
 
@@ -106,7 +106,7 @@
 ## Quick Start
 
 ### Option 1: GitHub Pages (Recommended)
-1. Visit the live demo: *[Your GitHub Pages URL]*
+1. Visit the live demo: *[[AFK.app](https://luinbytes.github.io/afk/)]*
 2. Start using immediately - no installation needed!
 
 ### Option 2: Local Development
@@ -230,8 +230,8 @@ MIT License - feel free to use, modify, and distribute!
 
 ---
 
-**Made with 😴 by [Your Name]**
+**Made with 😴 by luinbytes**
 
 🌟 Star this repo if you find it useful!
-🐛 [Report bugs](https://github.com/yourusername/afk/issues)
-💡 [Suggest features](https://github.com/yourusername/afk/issues)
+🐛 [Report bugs](https://github.com/luinbytes/afk/issues)
+💡 [Suggest features](https://github.com/luinbytes/afk/issues)
