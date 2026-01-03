@@ -1584,8 +1584,14 @@
                 // Load settings
                 await this.loadSettings();
 
+                // Load profiles from settings
+                await this.loadProfiles();
+
                 // Load sessions
                 await this.loadSessions();
+
+                // Load achievements
+                await this.loadAchievements();
 
                 // Apply settings
                 this.applySettings();
@@ -1687,6 +1693,25 @@
                 const transaction = this.db.transaction(['settings'], 'readwrite');
                 const store = transaction.objectStore('settings');
                 store.put({ key: 'userSettings', value: this.settings });
+                store.put({ key: 'profiles', value: this.profiles });
+            },
+
+            async loadProfiles() {
+                if (!this.db) return;
+
+                const transaction = this.db.transaction(['settings'], 'readonly');
+                const store = transaction.objectStore('settings');
+                const request = store.get('profiles');
+
+                return new Promise((resolve) => {
+                    request.onsuccess = () => {
+                        if (request.result && request.result.value) {
+                            this.profiles = request.result.value;
+                        }
+                        resolve();
+                    };
+                    request.onerror = () => resolve();
+                });
             },
 
             applySettings() {
@@ -2372,12 +2397,33 @@
                 this.updateAchievements();
             },
 
+            async saveAllAchievements() {
+                if (!this.db) return;
+
+                const transaction = this.db.transaction(['achievements'], 'readwrite');
+                const store = transaction.objectStore('achievements');
+
+                for (const achievementId of this.achievements) {
+                    store.put({ id: achievementId, unlockedAt: Date.now() });
+                }
+
+                return new Promise((resolve) => {
+                    transaction.oncomplete = () => resolve();
+                    transaction.onerror = () => resolve();
+                });
+            },
+
             async saveAchievement(id) {
                 if (!this.db) return;
 
                 const transaction = this.db.transaction(['achievements'], 'readwrite');
                 const store = transaction.objectStore('achievements');
                 store.put({ id, unlockedAt: Date.now() });
+
+                return new Promise((resolve) => {
+                    transaction.oncomplete = () => resolve();
+                    transaction.onerror = () => resolve();
+                });
             },
 
             async loadAchievements() {
@@ -2874,17 +2920,20 @@
                         // Import achievements
                         if (data.achievements) {
                             this.achievements = data.achievements;
+                            await this.saveAllAchievements();
                         }
 
                         // Import profiles
                         if (data.profiles) {
                             this.profiles = data.profiles;
+                            await this.saveSettings();
                         }
 
                         this.showNotification('Import Complete!', `Imported ${data.sessions.length} sessions`);
                         this.updateStatistics();
                         this.updateHistory();
                         this.updateAchievements();
+                        this.updateProfileSelector();
 
                     } catch (err) {
                         alert('Import failed: ' + err.message);
