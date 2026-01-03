@@ -3,9 +3,26 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AFK Status</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Smart AFK Status Tracker with AI-powered estimations and analytics">
+    <meta name="theme-color" content="#1a1a2e">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQUZLIFN0YXR1cyBUcmFja2VyIiwic2hvcnRfbmFtZSI6IkFGSyIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzFhMWEyZSIsInRoZW1lX2NvbG9yIjoiIzFhMWEyZSIsIm9yaWVudGF0aW9uIjoicG9ydHJhaXQiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJyUzRSUzQ3RleHQgeT0nLjllbScgZm9udC1zaXplPSc5MCclM0UlRjAlOUYlOTglQjQlM0MvdGV4dCUzRSUzQy9zdmclM0UiLCJzaXplcyI6IjUxMng1MTIiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
+    <title>AFK Status Tracker</title>
     <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #8a2be2;
+            --background: #1a1a2e;
+            --surface: rgba(0, 0, 0, 0.5);
+            --text-primary: #fff;
+            --text-secondary: #aaa;
+            --border-color: rgba(255, 107, 107, 0.3);
+            --success-color: #51cf66;
+            --warning-color: #ffd43b;
+            --error-color: #ff6b6b;
+            --animation-speed: 1;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -14,16 +31,17 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #1a1a2e;
+            background: var(--background);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
+            color: var(--text-primary);
             overflow: hidden;
             position: relative;
         }
 
+        /* Background Themes */
         body::before {
             content: '';
             position: absolute;
@@ -31,14 +49,55 @@
             left: -100%;
             width: 300%;
             height: 300%;
+            z-index: -1;
+            transition: opacity 0.5s ease;
+        }
+
+        body.theme-swirly::before {
             background:
                 radial-gradient(circle at 20% 80%, rgba(255, 107, 107, 0.3) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(138, 43, 226, 0.25) 0%, transparent 50%),
                 radial-gradient(circle at 40% 40%, rgba(255, 71, 87, 0.2) 0%, transparent 40%),
                 radial-gradient(circle at 70% 70%, rgba(99, 102, 241, 0.2) 0%, transparent 45%),
                 radial-gradient(circle at 50% 50%, rgba(16, 33, 62, 1) 0%, rgba(26, 26, 46, 1) 100%);
-            animation: swirlRotate 20s linear infinite;
-            z-index: -1;
+            animation: swirlRotate calc(20s / var(--animation-speed)) linear infinite;
+        }
+
+        body.theme-matrix::before {
+            background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%);
+            animation: none;
+        }
+
+        body.theme-cyberpunk::before {
+            background:
+                radial-gradient(circle at 30% 20%, rgba(255, 0, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(0, 255, 255, 0.3) 0%, transparent 50%),
+                linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 100%);
+            animation: swirlRotate calc(30s / var(--animation-speed)) linear infinite;
+        }
+
+        body.theme-space::before {
+            background:
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent),
+                radial-gradient(1px 1px at 80% 10%, white, transparent),
+                radial-gradient(2px 2px at 90% 60%, white, transparent),
+                radial-gradient(circle at 50% 50%, #000428 0%, #004e92 100%);
+            background-size: 200% 200%, 200% 200%, 200% 200%, 200% 200%, 200% 200%, 100% 100%;
+            animation: stars calc(200s / var(--animation-speed)) linear infinite;
+        }
+
+        body.theme-gradient::before {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            animation: gradientShift calc(15s / var(--animation-speed)) ease infinite;
+        }
+
+        body.theme-custom::before {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            animation: none;
         }
 
         @keyframes swirlRotate {
@@ -51,17 +110,73 @@
             }
         }
 
+        @keyframes stars {
+            from {
+                background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+            }
+
+            to {
+                background-position: -200% -200%, 200% 200%, -200% 200%, 200% -200%, -200% -200%, 0 0;
+            }
+        }
+
+        @keyframes gradientShift {
+            0%,
+            100% {
+                filter: hue-rotate(0deg);
+            }
+
+            50% {
+                filter: hue-rotate(45deg);
+            }
+        }
+
+        /* Matrix rain effect */
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+            display: none;
+        }
+
+        body.theme-matrix .matrix-rain {
+            display: block;
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            body::before {
+                animation: none !important;
+            }
+
+            .status-icon,
+            .pulse {
+                animation: none !important;
+            }
+        }
+
+        body.reduce-motion::before,
+        body.reduce-motion .status-icon,
+        body.reduce-motion .pulse {
+            animation: none !important;
+        }
+
         .container {
             max-width: 600px;
             width: 90%;
             padding: 40px;
-            background: rgba(0, 0, 0, 0.5);
+            background: var(--surface);
             border-radius: 20px;
             backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 107, 107, 0.3);
+            border: 2px solid var(--border-color);
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
             text-align: center;
             animation: slideIn 0.5s ease-out;
+            position: relative;
         }
 
         @keyframes slideIn {
@@ -76,10 +191,57 @@
             }
         }
 
+        /* Widget mode */
+        body.widget-mode .container {
+            max-width: 400px;
+            padding: 20px;
+            background: transparent;
+            border: none;
+            backdrop-filter: none;
+        }
+
+        body.widget-mode {
+            background: transparent;
+        }
+
+        body.widget-mode::before {
+            display: none;
+        }
+
+        /* Header with buttons */
+        .header {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s ease;
+            color: var(--text-primary);
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
         .status-icon {
             font-size: 80px;
             margin-bottom: 20px;
-            animation: pulse 2s ease-in-out infinite;
+            animation: pulse calc(2s / var(--animation-speed)) ease-in-out infinite;
         }
 
         @keyframes pulse {
@@ -103,7 +265,7 @@
 
         .status-subtext {
             font-size: 18px;
-            color: #aaa;
+            color: var(--text-secondary);
             margin-bottom: 40px;
             font-weight: 300;
         }
@@ -120,7 +282,7 @@
             font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: #ff6b6b;
+            color: var(--primary-color);
             margin-bottom: 12px;
             font-weight: 600;
         }
@@ -130,9 +292,9 @@
             padding: 14px 16px;
             font-size: 20px;
             background: rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(255, 107, 107, 0.4);
+            border: 2px solid var(--border-color);
             border-radius: 8px;
-            color: #fff;
+            color: var(--text-primary);
             font-weight: 500;
             transition: all 0.3s ease;
             font-family: inherit;
@@ -141,7 +303,7 @@
 
         .reason-input:focus {
             outline: none;
-            border-color: #ff6b6b;
+            border-color: var(--primary-color);
             background: rgba(255, 107, 107, 0.1);
             box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
         }
@@ -150,10 +312,69 @@
             color: rgba(255, 255, 255, 0.4);
         }
 
+        /* Timer mode selector */
+        .timer-mode-selector {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .timer-mode-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .timer-mode-option:hover {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .timer-mode-option.active {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .timer-mode-option input[type="radio"] {
+            accent-color: var(--primary-color);
+        }
+
+        .timer-mode-details {
+            flex: 1;
+        }
+
+        .timer-mode-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .timer-mode-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .countdown-input {
+            width: 80px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            color: var(--text-primary);
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+
         .button-group {
             display: flex;
             gap: 12px;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -169,7 +390,7 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #ff6b6b, #ff5252);
+            background: linear-gradient(135deg, var(--primary-color), #ff5252);
             color: #fff;
             flex: 1;
             min-width: 150px;
@@ -183,6 +404,16 @@
 
         .btn-primary:active {
             transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .btn-lg {
@@ -201,7 +432,7 @@
 
         .reason-text {
             font-size: 24px;
-            color: #ff6b6b;
+            color: var(--primary-color);
             margin: 30px 0;
             font-weight: 600;
             min-height: 32px;
@@ -217,9 +448,65 @@
 
         .timer-value {
             font-size: 28px;
-            color: #ff6b6b;
+            color: var(--primary-color);
             font-weight: 600;
             font-family: 'Courier New', monospace;
+        }
+
+        .timer-estimate {
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .estimate-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .estimate-value {
+            font-size: 16px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .estimate-confidence {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .estimate-status {
+            margin-top: 8px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .estimate-status.on-track {
+            color: var(--success-color);
+        }
+
+        .estimate-status.over-time {
+            color: var(--warning-color);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.3s ease;
+            border-radius: 3px;
         }
 
         .preset-buttons {
@@ -239,108 +526,2865 @@
             color: #ddd;
             cursor: pointer;
             transition: all 0.2s ease;
+            position: relative;
         }
 
         .preset-btn:hover {
             background: rgba(255, 107, 107, 0.2);
-            border-color: #ff6b6b;
+            border-color: var(--primary-color);
             color: #fff;
+        }
+
+        .preset-btn .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--primary-color);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Modal/Panel Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: var(--background);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        /* Settings */
+        .setting-group {
+            margin-bottom: 24px;
+        }
+
+        .setting-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .setting-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .theme-card {
+            padding: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .theme-card:hover {
+            border-color: var(--primary-color);
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .theme-card.active {
+            border-color: var(--primary-color);
+            background: rgba(255, 107, 107, 0.2);
+        }
+
+        .theme-preview {
+            width: 100%;
+            height: 60px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .theme-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .3s;
+            border-radius: 26px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        .range-input {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .range-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .range-input::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        .select-input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .select-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* History */
+        .history-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .history-reason {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .history-duration {
+            font-family: 'Courier New', monospace;
+            color: var(--text-secondary);
+        }
+
+        .history-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Achievements */
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+        }
+
+        .achievement-card {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-card.unlocked {
+            border-color: var(--primary-color);
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .achievement-card.locked {
+            opacity: 0.4;
+        }
+
+        .achievement-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .achievement-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .achievement-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Quotes */
+        .quote-container {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 8px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+
+        .quote-text {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .quote-author {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: right;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--background);
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            animation: slideInRight 0.3s ease;
+            max-width: 320px;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Profile selector */
+        .profile-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .profile-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s ease;
+        }
+
+        .profile-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-btn.active {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 24px;
+            }
+
+            .status-text {
+                font-size: 36px;
+            }
+
+            .status-icon {
+                font-size: 60px;
+            }
+
+            .modal-content {
+                padding: 20px;
+                max-width: 95%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .theme-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .achievement-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* High contrast mode */
+        body.high-contrast {
+            --primary-color: #ff0000;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --background: #000000;
+            --surface: rgba(0, 0, 0, 0.9);
+            --border-color: #ffffff;
+        }
+
+        body.high-contrast .container {
+            border-width: 3px;
         }
     </style>
 </head>
 
-<body>
+<body class="theme-swirly">
+    <!-- Matrix Rain Canvas -->
+    <canvas class="matrix-rain" id="matrixCanvas"></canvas>
+
+    <!-- Setup Screen -->
     <div class="setup-screen" id="setupScreen">
         <div class="container">
-            <div class="title">Set Your AFK Status</div>
-            <input type="text" id="reasonInput" class="reason-input" placeholder="What are you doing?"
-                value="ur mom LOL">
-            <div class="preset-buttons">
-                <button class="preset-btn" onclick="setReason('Getting hot choccy ☕')">☕ Hot Choccy</button>
-                <button class="preset-btn" onclick="setReason('Pissin 🚽')">🚽 Pissin</button>
-                <button class="preset-btn" onclick="setReason('Smoke break 🚭')">🚭 Smoke break</button>
+            <div class="header">
+                <button class="icon-btn" id="profileBtn" title="Profiles">👤</button>
+                <button class="icon-btn" id="historyBtn" title="History (H)">📊</button>
+                <button class="icon-btn" id="achievementsBtn" title="Achievements">🏆</button>
+                <button class="icon-btn" id="settingsBtn" title="Settings (S)">⚙️</button>
             </div>
+
+            <div class="title">Set Your AFK Status</div>
+
+            <!-- Profile Selector -->
+            <div class="profile-selector" id="profileSelector"></div>
+
+            <div class="reason-section">
+                <div class="reason-label">Why are you AFK?</div>
+                <input type="text" id="reasonInput" class="reason-input" placeholder="What are you doing?" value="">
+
+                <div class="preset-buttons" id="presetButtons">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Timer Mode Selector -->
+            <div class="timer-mode-selector">
+                <div class="reason-label">Timer Mode</div>
+                <label class="timer-mode-option active" data-mode="elapsed">
+                    <input type="radio" name="timerMode" value="elapsed" checked>
+                    <div class="timer-mode-details">
+                        <div class="timer-mode-title">⏱️ Track Time</div>
+                        <div class="timer-mode-desc">See how long you've been AFK</div>
+                    </div>
+                </label>
+                <label class="timer-mode-option" data-mode="countdown">
+                    <input type="radio" name="timerMode" value="countdown">
+                    <div class="timer-mode-details">
+                        <div class="timer-mode-title">⏲️ I'll be back in</div>
+                        <div class="timer-mode-desc">Set a manual countdown</div>
+                    </div>
+                    <input type="number" class="countdown-input" id="countdownInput" placeholder="15" min="1" max="999">
+                    <span style="margin-left: 4px; color: var(--text-secondary);">min</span>
+                </label>
+                <label class="timer-mode-option" data-mode="smart">
+                    <input type="radio" name="timerMode" value="smart">
+                    <div class="timer-mode-details">
+                        <div class="timer-mode-title">🤖 Smart Estimate</div>
+                        <div class="timer-mode-desc" id="smartEstimateDesc">AI predicts your return time</div>
+                    </div>
+                </label>
+            </div>
+
             <button class="btn btn-primary btn-lg" id="goAfkBtn">GO AFK</button>
         </div>
     </div>
 
+    <!-- AFK Screen -->
     <div class="afk-screen" id="afkScreen" style="display: none;">
         <div class="container">
-            <div class="status-icon">😴</div>
+            <div class="status-icon" id="statusIcon">😴</div>
             <div class="status-text">AWAY</div>
-            <div class="reason-text" id="reasonDisplay">ur mom LOL</div>
-            <div class="timer">
-                <div>AFK for:</div>
-                <div class="timer-value" id="timerDisplay">00:00</div>
+            <div class="reason-text" id="reasonDisplay"></div>
+
+            <!-- Quote Display -->
+            <div class="quote-container" id="quoteContainer" style="display: none;">
+                <div class="quote-text" id="quoteText"></div>
+                <div class="quote-author" id="quoteAuthor"></div>
             </div>
+
+            <div class="timer">
+                <div id="timerLabel">AFK for:</div>
+                <div class="timer-value" id="timerDisplay">00:00</div>
+
+                <!-- Progress bar for countdown -->
+                <div class="progress-bar" id="progressBar" style="display: none;">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <!-- Smart estimate display -->
+                <div class="timer-estimate" id="estimateDisplay" style="display: none;">
+                    <div class="estimate-label">📊 Based on your history</div>
+                    <div class="estimate-value" id="estimateValue">Usually ~8 min</div>
+                    <div class="estimate-confidence" id="estimateConfidence">High confidence (23 similar breaks)</div>
+                    <div class="estimate-status on-track" id="estimateStatus">✓ On track</div>
+                </div>
+            </div>
+
             <button class="btn btn-primary btn-lg" id="backBtn">I'm back!</button>
         </div>
     </div>
 
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2 class="modal-title">⚙️ Settings</h2>
+                <button class="close-btn" onclick="AFKApp.closeModal('settingsModal')">&times;</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="appearance">Appearance</button>
+                <button class="tab" data-tab="behavior">Behavior</button>
+                <button class="tab" data-tab="notifications">Notifications</button>
+                <button class="tab" data-tab="presets">Presets</button>
+                <button class="tab" data-tab="data">Data</button>
+                <button class="tab" data-tab="accessibility">Accessibility</button>
+            </div>
+
+            <!-- Appearance Tab -->
+            <div class="tab-content active" data-content="appearance">
+                <div class="setting-group">
+                    <label class="setting-label">Theme</label>
+                    <div class="setting-description">Choose your background theme</div>
+                    <div class="theme-grid" id="themeGrid">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Custom Background Image</label>
+                    <div class="setting-description">Upload your own background image</div>
+                    <input type="file" id="bgImageInput" accept="image/*" style="margin-bottom: 12px;">
+                    <button class="btn btn-secondary" id="removeBgBtn">Remove Custom Background</button>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Primary Color</label>
+                    <input type="color" id="primaryColorInput" value="#ff6b6b" style="width: 100%; height: 50px; cursor: pointer;">
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Animation Speed: <span id="animSpeedValue">1.0</span>x</label>
+                    <input type="range" class="range-input" id="animSpeedInput" min="0.1" max="3" step="0.1" value="1">
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Custom Status Emoji</label>
+                    <input type="text" class="reason-input" id="statusEmojiInput" placeholder="😴" maxlength="2" style="font-size: 40px; text-align: center;">
+                </div>
+            </div>
+
+            <!-- Behavior Tab -->
+            <div class="tab-content" data-content="behavior">
+                <div class="setting-group">
+                    <label class="setting-label">Auto Fullscreen</label>
+                    <div class="setting-description">Automatically enter fullscreen when going AFK</div>
+                    <label class="switch">
+                        <input type="checkbox" id="autoFullscreenToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Screen Wake Lock</label>
+                    <div class="setting-description">Keep screen awake while AFK</div>
+                    <label class="switch">
+                        <input type="checkbox" id="wakeLockToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Show Quotes While AFK</label>
+                    <div class="setting-description">Display motivational quotes during AFK</div>
+                    <label class="switch">
+                        <input type="checkbox" id="quotesToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Quote Rotation (seconds)</label>
+                    <input type="number" class="reason-input" id="quoteIntervalInput" value="30" min="10" max="300">
+                </div>
+            </div>
+
+            <!-- Notifications Tab -->
+            <div class="tab-content" data-content="notifications">
+                <div class="setting-group">
+                    <label class="setting-label">Desktop Notifications</label>
+                    <div class="setting-description">Get notified about break reminders</div>
+                    <label class="switch">
+                        <input type="checkbox" id="notificationsToggle">
+                        <span class="slider"></span>
+                    </label>
+                    <button class="btn btn-secondary" id="requestNotifBtn" style="margin-top: 12px;">Request Permission</button>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Sound Effects</label>
+                    <div class="setting-description">Play sounds when going AFK or returning</div>
+                    <label class="switch">
+                        <input type="checkbox" id="soundsToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Sound Volume</label>
+                    <input type="range" class="range-input" id="volumeInput" min="0" max="100" step="5" value="50">
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Pomodoro Timer</label>
+                    <div class="setting-description">Get reminded to take breaks</div>
+                    <label class="switch">
+                        <input type="checkbox" id="pomodoroToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Work Duration (minutes)</label>
+                    <input type="number" class="reason-input" id="pomodoroWorkInput" value="25" min="1" max="120">
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Break Duration (minutes)</label>
+                    <input type="number" class="reason-input" id="pomodoroBreakInput" value="5" min="1" max="30">
+                </div>
+            </div>
+
+            <!-- Presets Tab -->
+            <div class="tab-content" data-content="presets">
+                <div class="setting-group">
+                    <label class="setting-label">Custom Presets</label>
+                    <div class="setting-description">Add your own quick-select reasons</div>
+                    <div id="customPresetsList"></div>
+                    <div style="display: flex; gap: 8px; margin-top: 12px;">
+                        <input type="text" class="reason-input" id="newPresetInput" placeholder="New preset (e.g., Coffee ☕)" style="flex: 1;">
+                        <button class="btn btn-primary" id="addPresetBtn">Add</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Tab -->
+            <div class="tab-content" data-content="data">
+                <div class="setting-group">
+                    <label class="setting-label">Export Data</label>
+                    <div class="setting-description">Download all your AFK history and settings</div>
+                    <button class="btn btn-primary" id="exportBtn">Export as JSON</button>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Import Data</label>
+                    <div class="setting-description">Import previously exported data</div>
+                    <input type="file" id="importInput" accept=".json">
+                    <button class="btn btn-secondary" id="importBtn" style="margin-top: 12px;">Import</button>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Clear All Data</label>
+                    <div class="setting-description">Permanently delete all history and settings</div>
+                    <button class="btn btn-secondary" id="clearDataBtn" style="background: rgba(255, 0, 0, 0.2);">Clear All Data</button>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Share Status</label>
+                    <div class="setting-description">Generate a shareable link or share your stats</div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn btn-secondary" id="shareBtn">Copy Share Link</button>
+                        <button class="btn btn-secondary" id="qrBtn">Show QR Code</button>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Share Your Stats</label>
+                    <div class="setting-description">Show off your AFK tracker achievements on social media</div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn btn-secondary" id="shareTwitterBtn">Share to Twitter</button>
+                        <button class="btn btn-secondary" id="shareDiscordBtn">Copy for Discord</button>
+                        <button class="btn btn-secondary" id="generateCardBtn">Generate Image</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accessibility Tab -->
+            <div class="tab-content" data-content="accessibility">
+                <div class="setting-group">
+                    <label class="setting-label">Reduce Motion</label>
+                    <div class="setting-description">Disable animations for reduced motion</div>
+                    <label class="switch">
+                        <input type="checkbox" id="reduceMotionToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">High Contrast</label>
+                    <div class="setting-description">Increase contrast for better visibility</div>
+                    <label class="switch">
+                        <input type="checkbox" id="highContrastToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Font Size</label>
+                    <select class="select-input" id="fontSizeSelect">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                        <option value="xl">Extra Large</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal" id="historyModal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2 class="modal-title">📊 History & Statistics</h2>
+                <button class="close-btn" onclick="AFKApp.closeModal('historyModal')">&times;</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="stats">Statistics</button>
+                <button class="tab" data-tab="history">History</button>
+                <button class="tab" data-tab="analytics">Analytics</button>
+            </div>
+
+            <!-- Stats Tab -->
+            <div class="tab-content active" data-content="stats">
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Top Reasons</label>
+                    <div id="topReasons"></div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div class="tab-content" data-content="history">
+                <div class="setting-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <label class="setting-label" style="margin: 0;">Recent Sessions</label>
+                        <select class="select-input" id="historyFilterSelect" style="width: auto;">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                    <div class="history-list" id="historyList">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div class="tab-content" data-content="analytics">
+                <div class="setting-group">
+                    <label class="setting-label">Breakdown by Time</label>
+                    <div class="setting-description">Your AFK patterns by hour</div>
+                    <div id="hourlyChart" style="height: 200px;"></div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Duration Distribution</label>
+                    <div id="durationChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievements Modal -->
+    <div class="modal" id="achievementsModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2 class="modal-title">🏆 Achievements</h2>
+                <button class="close-btn" onclick="AFKApp.closeModal('achievementsModal')">&times;</button>
+            </div>
+
+            <div class="achievement-grid" id="achievementGrid">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Profiles Modal -->
+    <div class="modal" id="profilesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">👤 Profiles</h2>
+                <button class="close-btn" onclick="AFKApp.closeModal('profilesModal')">&times;</button>
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label">Switch Profile</label>
+                <div class="setting-description">Different profiles keep separate history and settings</div>
+                <div id="profilesList"></div>
+                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                    <input type="text" class="reason-input" id="newProfileInput" placeholder="Profile name (e.g., Work, Gaming)" style="flex: 1;">
+                    <button class="btn btn-primary" id="addProfileBtn">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div class="modal" id="qrModal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <div class="modal-header">
+                <h2 class="modal-title">📱 QR Code</h2>
+                <button class="close-btn" onclick="AFKApp.closeModal('qrModal')">&times;</button>
+            </div>
+            <div id="qrCode"></div>
+            <p style="margin-top: 16px; color: var(--text-secondary);">Scan to open on mobile</p>
+        </div>
+    </div>
+
     <script>
-        const reasonInput = document.getElementById('reasonInput');
-        const setupScreen = document.getElementById('setupScreen');
-        const afkScreen = document.getElementById('afkScreen');
-        const goAfkBtn = document.getElementById('goAfkBtn');
-        const backBtn = document.getElementById('backBtn');
-        const reasonDisplay = document.getElementById('reasonDisplay');
-        const timerDisplay = document.getElementById('timerDisplay');
+        // ============================================
+        // AFK Application - Main Logic
+        // ============================================
 
-        let startTime = null;
-        let isRunning = false;
+        const AFKApp = {
+            // State
+            state: {
+                isAFK: false,
+                startTime: null,
+                currentReason: '',
+                timerMode: 'elapsed', // elapsed, countdown, smart
+                countdownMinutes: 15,
+                timerInterval: null,
+                quoteInterval: null,
+                currentProfile: 'default',
+                wakeLock: null,
+                pomodoroTimer: null,
+            },
 
-        function setReason(reason) {
-            reasonInput.value = reason;
-            reasonInput.focus();
-        }
+            // Settings
+            settings: {
+                theme: 'swirly',
+                customBgImage: null,
+                primaryColor: '#ff6b6b',
+                animationSpeed: 1,
+                statusEmoji: '😴',
+                autoFullscreen: true,
+                wakeLock: false,
+                showQuotes: true,
+                quoteInterval: 30,
+                notifications: false,
+                sounds: false,
+                volume: 50,
+                pomodoro: false,
+                pomodoroWork: 25,
+                pomodoroBreak: 5,
+                customPresets: [],
+                reduceMotion: false,
+                highContrast: false,
+                fontSize: 'medium',
+            },
 
-        function goAFK() {
-            const reason = reasonInput.value.trim() || 'AFK';
-            reasonDisplay.textContent = reason;
-            setupScreen.style.display = 'none';
-            afkScreen.style.display = 'flex';
-            startTime = Date.now();
-            isRunning = true;
+            // Data stores
+            db: null,
+            sessions: [],
+            achievements: [],
+            profiles: ['default'],
 
-            // Enter fullscreen mode
-            document.documentElement.requestFullscreen().catch(() => {
-                console.log('Fullscreen blocked by browser');
-            });
-        }
+            // ============================================
+            // Initialization
+            // ============================================
+            async init() {
+                console.log('🚀 Initializing AFK App...');
 
-        function backFromAFK() {
-            // Exit fullscreen if currently in fullscreen mode
-            if (document.fullscreenElement) {
-                document.exitFullscreen().catch(() => {
-                    console.log('Failed to exit fullscreen');
+                // Initialize IndexedDB
+                await this.initDB();
+
+                // Load settings
+                await this.loadSettings();
+
+                // Load sessions
+                await this.loadSessions();
+
+                // Apply settings
+                this.applySettings();
+
+                // Setup event listeners
+                this.setupEventListeners();
+
+                // Setup tabs
+                this.setupTabs();
+
+                // Initialize UI
+                this.updatePresetButtons();
+                this.updateThemeGrid();
+                this.updateProfileSelector();
+                this.updateAchievements();
+
+                // Check URL parameters
+                this.handleURLParams();
+
+                // Initialize matrix effect
+                this.initMatrixEffect();
+
+                // Setup pomodoro if enabled
+                if (this.settings.pomodoro) {
+                    this.startPomodoroTimer();
+                }
+
+                // Register service worker for PWA
+                this.registerServiceWorker();
+
+                // Focus input
+                document.getElementById('reasonInput').focus();
+
+                console.log('✅ AFK App initialized!');
+            },
+
+            // ============================================
+            // IndexedDB Setup
+            // ============================================
+            async initDB() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open('AFKTrackerDB', 1);
+
+                    request.onerror = () => reject(request.error);
+                    request.onsuccess = () => {
+                        this.db = request.result;
+                        resolve();
+                    };
+
+                    request.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+
+                        // Sessions store
+                        if (!db.objectStoreNames.contains('sessions')) {
+                            const sessionsStore = db.createObjectStore('sessions', { keyPath: 'id', autoIncrement: true });
+                            sessionsStore.createIndex('profile', 'profile', { unique: false });
+                            sessionsStore.createIndex('reason', 'reason', { unique: false });
+                            sessionsStore.createIndex('startTime', 'startTime', { unique: false });
+                            sessionsStore.createIndex('normalizedReason', 'normalizedReason', { unique: false });
+                        }
+
+                        // Settings store
+                        if (!db.objectStoreNames.contains('settings')) {
+                            db.createObjectStore('settings', { keyPath: 'key' });
+                        }
+
+                        // Achievements store
+                        if (!db.objectStoreNames.contains('achievements')) {
+                            db.createObjectStore('achievements', { keyPath: 'id' });
+                        }
+                    };
                 });
-            }
+            },
 
-            afkScreen.style.display = 'none';
-            setupScreen.style.display = 'flex';
-            isRunning = false;
-            timerDisplay.textContent = '00:00';
-            reasonInput.focus();
-        }
+            // ============================================
+            // Settings Management
+            // ============================================
+            async loadSettings() {
+                if (!this.db) return;
 
-        function updateTimer() {
-            if (!isRunning || !startTime) return;
+                const transaction = this.db.transaction(['settings'], 'readonly');
+                const store = transaction.objectStore('settings');
+                const request = store.get('userSettings');
 
-            const elapsed = Math.floor((Date.now() - startTime) / 1000);
-            const minutes = Math.floor(elapsed / 60);
-            const seconds = elapsed % 60;
+                return new Promise((resolve) => {
+                    request.onsuccess = () => {
+                        if (request.result) {
+                            this.settings = { ...this.settings, ...request.result.value };
+                        }
+                        resolve();
+                    };
+                    request.onerror = () => resolve();
+                });
+            },
 
-            timerDisplay.textContent =
-                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }
+            async saveSettings() {
+                if (!this.db) return;
 
-        goAfkBtn.addEventListener('click', goAFK);
-        backBtn.addEventListener('click', backFromAFK);
-        reasonInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') goAFK();
+                const transaction = this.db.transaction(['settings'], 'readwrite');
+                const store = transaction.objectStore('settings');
+                store.put({ key: 'userSettings', value: this.settings });
+            },
+
+            applySettings() {
+                // Apply theme
+                document.body.className = `theme-${this.settings.theme}`;
+
+                // Apply custom background
+                if (this.settings.customBgImage) {
+                    document.body.style.setProperty('--custom-bg', `url(${this.settings.customBgImage})`);
+                    document.body.classList.add('theme-custom');
+                    document.body.querySelector('::before').style.backgroundImage = `url(${this.settings.customBgImage})`;
+                }
+
+                // Apply colors
+                document.documentElement.style.setProperty('--primary-color', this.settings.primaryColor);
+                document.documentElement.style.setProperty('--animation-speed', this.settings.animationSpeed);
+
+                // Apply accessibility
+                if (this.settings.reduceMotion) {
+                    document.body.classList.add('reduce-motion');
+                }
+                if (this.settings.highContrast) {
+                    document.body.classList.add('high-contrast');
+                }
+
+                // Update form values
+                document.getElementById('primaryColorInput').value = this.settings.primaryColor;
+                document.getElementById('animSpeedInput').value = this.settings.animationSpeed;
+                document.getElementById('animSpeedValue').textContent = this.settings.animationSpeed.toFixed(1);
+                document.getElementById('statusEmojiInput').value = this.settings.statusEmoji;
+                document.getElementById('autoFullscreenToggle').checked = this.settings.autoFullscreen;
+                document.getElementById('wakeLockToggle').checked = this.settings.wakeLock;
+                document.getElementById('quotesToggle').checked = this.settings.showQuotes;
+                document.getElementById('quoteIntervalInput').value = this.settings.quoteInterval;
+                document.getElementById('notificationsToggle').checked = this.settings.notifications;
+                document.getElementById('soundsToggle').checked = this.settings.sounds;
+                document.getElementById('volumeInput').value = this.settings.volume;
+                document.getElementById('pomodoroToggle').checked = this.settings.pomodoro;
+                document.getElementById('pomodoroWorkInput').value = this.settings.pomodoroWork;
+                document.getElementById('pomodoroBreakInput').value = this.settings.pomodoroBreak;
+                document.getElementById('reduceMotionToggle').checked = this.settings.reduceMotion;
+                document.getElementById('highContrastToggle').checked = this.settings.highContrast;
+                document.getElementById('fontSizeSelect').value = this.settings.fontSize;
+            },
+
+            // ============================================
+            // Session Management
+            // ============================================
+            async loadSessions() {
+                if (!this.db) return;
+
+                const transaction = this.db.transaction(['sessions'], 'readonly');
+                const store = transaction.objectStore('sessions');
+                const index = store.index('profile');
+                const request = index.getAll(this.state.currentProfile);
+
+                return new Promise((resolve) => {
+                    request.onsuccess = () => {
+                        this.sessions = request.result || [];
+                        resolve();
+                    };
+                    request.onerror = () => {
+                        this.sessions = [];
+                        resolve();
+                    };
+                });
+            },
+
+            async saveSession(session) {
+                if (!this.db) return;
+
+                const transaction = this.db.transaction(['sessions'], 'readwrite');
+                const store = transaction.objectStore('sessions');
+
+                const sessionData = {
+                    ...session,
+                    profile: this.state.currentProfile,
+                    normalizedReason: this.normalizeReason(session.reason),
+                };
+
+                store.add(sessionData);
+
+                return new Promise((resolve) => {
+                    transaction.oncomplete = async () => {
+                        await this.loadSessions();
+                        await this.checkAchievements();
+                        resolve();
+                    };
+                });
+            },
+
+            // ============================================
+            // Fuzzy Matching & Smart Estimation
+            // ============================================
+            normalizeReason(reason) {
+                return reason.toLowerCase()
+                    .trim()
+                    .replace(/[^\w\s]/gi, '') // Remove special chars and emoji
+                    .replace(/\s+/g, ' '); // Normalize whitespace
+            },
+
+            levenshteinDistance(str1, str2) {
+                const matrix = [];
+
+                for (let i = 0; i <= str2.length; i++) {
+                    matrix[i] = [i];
+                }
+
+                for (let j = 0; j <= str1.length; j++) {
+                    matrix[0][j] = j;
+                }
+
+                for (let i = 1; i <= str2.length; i++) {
+                    for (let j = 1; j <= str1.length; j++) {
+                        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                            matrix[i][j] = matrix[i - 1][j - 1];
+                        } else {
+                            matrix[i][j] = Math.min(
+                                matrix[i - 1][j - 1] + 1,
+                                matrix[i][j - 1] + 1,
+                                matrix[i - 1][j] + 1
+                            );
+                        }
+                    }
+                }
+
+                return matrix[str2.length][str1.length];
+            },
+
+            calculateSimilarity(str1, str2) {
+                const normalized1 = this.normalizeReason(str1);
+                const normalized2 = this.normalizeReason(str2);
+
+                // Exact match
+                if (normalized1 === normalized2) return 1.0;
+
+                // Substring match
+                if (normalized1.includes(normalized2) || normalized2.includes(normalized1)) {
+                    return 0.9;
+                }
+
+                // Levenshtein distance
+                const maxLen = Math.max(normalized1.length, normalized2.length);
+                const distance = this.levenshteinDistance(normalized1, normalized2);
+                return 1 - (distance / maxLen);
+            },
+
+            findSimilarSessions(reason, threshold = 0.7) {
+                const similar = [];
+
+                for (const session of this.sessions) {
+                    const similarity = this.calculateSimilarity(reason, session.reason);
+                    if (similarity >= threshold) {
+                        similar.push({ ...session, similarity });
+                    }
+                }
+
+                // Sort by similarity (highest first) and recency
+                similar.sort((a, b) => {
+                    if (Math.abs(a.similarity - b.similarity) < 0.1) {
+                        return b.startTime - a.startTime; // More recent first
+                    }
+                    return b.similarity - a.similarity;
+                });
+
+                return similar;
+            },
+
+            calculateSmartEstimate(reason) {
+                const similar = this.findSimilarSessions(reason);
+
+                if (similar.length === 0) {
+                    return {
+                        estimateMinutes: null,
+                        confidence: 'none',
+                        message: 'No prediction yet - building your profile!',
+                        count: 0
+                    };
+                }
+
+                // Get durations (filter outliers using IQR method)
+                let durations = similar.map(s => s.duration);
+                durations.sort((a, b) => a - b);
+
+                // Remove outliers
+                const q1 = durations[Math.floor(durations.length * 0.25)];
+                const q3 = durations[Math.floor(durations.length * 0.75)];
+                const iqr = q3 - q1;
+                const lowerBound = q1 - 1.5 * iqr;
+                const upperBound = q3 + 1.5 * iqr;
+
+                const filteredDurations = durations.filter(d => d >= lowerBound && d <= upperBound);
+                const outlierCount = durations.length - filteredDurations.length;
+
+                // Calculate weighted average (recent sessions weighted more)
+                const now = Date.now();
+                const thirtyDaysAgo = now - (30 * 24 * 60 * 60 * 1000);
+
+                let weightedSum = 0;
+                let weightSum = 0;
+
+                for (const session of similar) {
+                    if (session.duration >= lowerBound && session.duration <= upperBound) {
+                        // Weight: 1.0 for last 7 days, 0.5 for 7-30 days, 0.25 for older
+                        let weight = 1.0;
+                        const age = now - session.startTime;
+                        if (age > 30 * 24 * 60 * 60 * 1000) {
+                            weight = 0.25;
+                        } else if (age > 7 * 24 * 60 * 60 * 1000) {
+                            weight = 0.5;
+                        }
+
+                        // Also weight by similarity
+                        weight *= session.similarity;
+
+                        weightedSum += session.duration * weight;
+                        weightSum += weight;
+                    }
+                }
+
+                const avgDuration = weightedSum / weightSum;
+                const estimateMinutes = Math.round(avgDuration / 60);
+
+                // Calculate variance for confidence
+                const variance = filteredDurations.reduce((sum, d) => {
+                    return sum + Math.pow(d - avgDuration, 2);
+                }, 0) / filteredDurations.length;
+                const stdDev = Math.sqrt(variance);
+                const coefficientOfVariation = stdDev / avgDuration;
+
+                // Determine confidence
+                let confidence = 'low';
+                if (filteredDurations.length >= 10 && coefficientOfVariation < 0.3) {
+                    confidence = 'high';
+                } else if (filteredDurations.length >= 5 && coefficientOfVariation < 0.5) {
+                    confidence = 'medium';
+                }
+
+                let message = `Usually ~${estimateMinutes} min`;
+                if (similar.length >= 3) {
+                    const grouped = similar.filter(s => s.similarity > 0.85).length;
+                    if (grouped < similar.length) {
+                        message += ` (grouped with ${grouped} similar)`;
+                    }
+                }
+
+                return {
+                    estimateMinutes,
+                    estimateSeconds: Math.round(avgDuration),
+                    confidence,
+                    message,
+                    count: similar.length,
+                    outlierCount,
+                    variance: stdDev / 60, // in minutes
+                };
+            },
+
+            updateSmartEstimatePreview() {
+                const reason = document.getElementById('reasonInput').value.trim() || 'AFK';
+                const estimate = this.calculateSmartEstimate(reason);
+
+                const desc = document.getElementById('smartEstimateDesc');
+                if (estimate.estimateMinutes) {
+                    desc.textContent = `~${estimate.estimateMinutes} min (${estimate.confidence} confidence)`;
+                } else {
+                    desc.textContent = 'No history for this reason yet';
+                }
+            },
+
+            // ============================================
+            // AFK Control
+            // ============================================
+            async goAFK() {
+                const reason = document.getElementById('reasonInput').value.trim() || 'AFK';
+                const timerMode = document.querySelector('input[name="timerMode"]:checked').value;
+
+                this.state.currentReason = reason;
+                this.state.timerMode = timerMode;
+                this.state.isAFK = true;
+                this.state.startTime = Date.now();
+
+                // Get countdown value if in countdown mode
+                if (timerMode === 'countdown') {
+                    this.state.countdownMinutes = parseInt(document.getElementById('countdownInput').value) || 15;
+                }
+
+                // Update display
+                document.getElementById('reasonDisplay').textContent = reason;
+                document.getElementById('statusIcon').textContent = this.settings.statusEmoji;
+
+                // Switch screens
+                document.getElementById('setupScreen').style.display = 'none';
+                document.getElementById('afkScreen').style.display = 'flex';
+
+                // Start timer
+                this.startTimer();
+
+                // Start quotes if enabled
+                if (this.settings.showQuotes) {
+                    this.startQuotes();
+                }
+
+                // Fullscreen
+                if (this.settings.autoFullscreen) {
+                    try {
+                        await document.documentElement.requestFullscreen();
+                    } catch (err) {
+                        console.log('Fullscreen not available:', err);
+                    }
+                }
+
+                // Wake lock
+                if (this.settings.wakeLock && 'wakeLock' in navigator) {
+                    try {
+                        this.state.wakeLock = await navigator.wakeLock.request('screen');
+                    } catch (err) {
+                        console.log('Wake lock not available:', err);
+                    }
+                }
+
+                // Play sound
+                if (this.settings.sounds) {
+                    this.playSound('whoosh');
+                }
+            },
+
+            async backFromAFK() {
+                const endTime = Date.now();
+                const duration = Math.floor((endTime - this.state.startTime) / 1000); // in seconds
+
+                // Save session
+                await this.saveSession({
+                    reason: this.state.currentReason,
+                    startTime: this.state.startTime,
+                    endTime: endTime,
+                    duration: duration,
+                    timerMode: this.state.timerMode,
+                });
+
+                // Reset state
+                this.state.isAFK = false;
+                this.state.startTime = null;
+                this.state.currentReason = '';
+
+                // Clear timers
+                if (this.state.timerInterval) {
+                    clearInterval(this.state.timerInterval);
+                }
+                if (this.state.quoteInterval) {
+                    clearInterval(this.state.quoteInterval);
+                }
+
+                // Exit fullscreen
+                if (document.fullscreenElement) {
+                    await document.exitFullscreen().catch(() => { });
+                }
+
+                // Release wake lock
+                if (this.state.wakeLock) {
+                    await this.state.wakeLock.release();
+                    this.state.wakeLock = null;
+                }
+
+                // Switch screens
+                document.getElementById('afkScreen').style.display = 'none';
+                document.getElementById('setupScreen').style.display = 'flex';
+
+                // Play sound
+                if (this.settings.sounds) {
+                    this.playSound('return');
+                }
+
+                // Show notification
+                if (this.settings.notifications && duration > 60) {
+                    this.showNotification('Welcome back!', `You were AFK for ${this.formatDuration(duration)}`);
+                }
+
+                // Focus input
+                document.getElementById('reasonInput').focus();
+            },
+
+            // ============================================
+            // Timer
+            // ============================================
+            startTimer() {
+                this.updateTimer(); // Initial update
+
+                this.state.timerInterval = setInterval(() => {
+                    this.updateTimer();
+                }, 1000);
+            },
+
+            updateTimer() {
+                if (!this.state.isAFK || !this.state.startTime) return;
+
+                const elapsed = Math.floor((Date.now() - this.state.startTime) / 1000);
+                const timerDisplay = document.getElementById('timerDisplay');
+                const timerLabel = document.getElementById('timerLabel');
+                const progressBar = document.getElementById('progressBar');
+                const progressFill = document.getElementById('progressFill');
+                const estimateDisplay = document.getElementById('estimateDisplay');
+
+                if (this.state.timerMode === 'elapsed') {
+                    // Show elapsed time
+                    timerLabel.textContent = 'AFK for:';
+                    timerDisplay.textContent = this.formatDuration(elapsed);
+                    progressBar.style.display = 'none';
+
+                    // Show smart estimate alongside
+                    const estimate = this.calculateSmartEstimate(this.state.currentReason);
+                    if (estimate.estimateMinutes) {
+                        estimateDisplay.style.display = 'block';
+                        document.getElementById('estimateValue').textContent = estimate.message;
+
+                        const confidenceText = {
+                            'high': `High confidence (${estimate.count} similar breaks)`,
+                            'medium': `Medium confidence (${estimate.count} similar breaks)`,
+                            'low': `Low confidence (${estimate.count} similar breaks)`,
+                        };
+                        document.getElementById('estimateConfidence').textContent = confidenceText[estimate.confidence];
+
+                        // Compare
+                        const elapsedMin = elapsed / 60;
+                        const estimateMin = estimate.estimateMinutes;
+                        const statusEl = document.getElementById('estimateStatus');
+
+                        if (elapsedMin < estimateMin * 0.9) {
+                            statusEl.textContent = '✓ On track';
+                            statusEl.className = 'estimate-status on-track';
+                        } else if (elapsedMin > estimateMin * 1.2) {
+                            const diff = Math.round(elapsedMin - estimateMin);
+                            statusEl.textContent = `⚠ Longer than usual (+${diff} min)`;
+                            statusEl.className = 'estimate-status over-time';
+                        } else {
+                            statusEl.textContent = '✓ On track';
+                            statusEl.className = 'estimate-status on-track';
+                        }
+                    } else {
+                        estimateDisplay.style.display = 'none';
+                    }
+
+                } else if (this.state.timerMode === 'countdown') {
+                    // Show countdown
+                    const totalSeconds = this.state.countdownMinutes * 60;
+                    const remaining = Math.max(0, totalSeconds - elapsed);
+
+                    timerLabel.textContent = 'Back in:';
+                    timerDisplay.textContent = this.formatDuration(remaining);
+
+                    // Progress bar
+                    progressBar.style.display = 'block';
+                    const progress = ((totalSeconds - remaining) / totalSeconds) * 100;
+                    progressFill.style.width = `${Math.min(100, progress)}%`;
+
+                    estimateDisplay.style.display = 'none';
+
+                } else if (this.state.timerMode === 'smart') {
+                    // Show elapsed with smart estimate
+                    const estimate = this.calculateSmartEstimate(this.state.currentReason);
+
+                    if (estimate.estimateMinutes) {
+                        const totalSeconds = estimate.estimateSeconds;
+                        const remaining = Math.max(0, totalSeconds - elapsed);
+
+                        timerLabel.textContent = 'Estimated return:';
+                        timerDisplay.textContent = this.formatDuration(remaining);
+
+                        // Progress bar
+                        progressBar.style.display = 'block';
+                        const progress = (elapsed / totalSeconds) * 100;
+                        progressFill.style.width = `${Math.min(100, progress)}%`;
+
+                        // Info
+                        estimateDisplay.style.display = 'block';
+                        document.getElementById('estimateValue').textContent = estimate.message;
+                        document.getElementById('estimateConfidence').textContent =
+                            `Based on ${estimate.count} similar breaks`;
+
+                        const statusEl = document.getElementById('estimateStatus');
+                        if (remaining > 0) {
+                            statusEl.textContent = '✓ On schedule';
+                            statusEl.className = 'estimate-status on-track';
+                        } else {
+                            const overtime = Math.round((elapsed - totalSeconds) / 60);
+                            statusEl.textContent = `⚠ Running over (+${overtime} min)`;
+                            statusEl.className = 'estimate-status over-time';
+                        }
+                    } else {
+                        // Fallback to elapsed
+                        timerLabel.textContent = 'AFK for:';
+                        timerDisplay.textContent = this.formatDuration(elapsed);
+                        progressBar.style.display = 'none';
+                        estimateDisplay.style.display = 'none';
+                    }
+                }
+            },
+
+            formatDuration(seconds) {
+                const hrs = Math.floor(seconds / 3600);
+                const mins = Math.floor((seconds % 3600) / 60);
+                const secs = seconds % 60;
+
+                if (hrs > 0) {
+                    return `${hrs}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                } else {
+                    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                }
+            },
+
+            // ============================================
+            // Quotes
+            // ============================================
+            quotes: [
+                { text: "Take a break, you deserve it!", author: "AFK Tracker" },
+                { text: "Rest is not idleness.", author: "John Lubbock" },
+                { text: "Almost everything will work again if you unplug it for a few minutes.", author: "Anne Lamott" },
+                { text: "Take rest; a field that has rested gives a bountiful crop.", author: "Ovid" },
+                { text: "Don't forget to drink water!", author: "Hydration Reminder" },
+                { text: "Stretch your legs and rest your eyes.", author: "Health Tip" },
+                { text: "The time you enjoy wasting is not wasted time.", author: "Marthe Troly-Curtin" },
+                { text: "Sometimes the most productive thing you can do is relax.", author: "Mark Black" },
+                { text: "Breaks are essential for creativity and productivity.", author: "Research Says" },
+                { text: "Your mind needs rest just like your body does.", author: "Wellness Tip" },
+            ],
+
+            startQuotes() {
+                this.showRandomQuote(); // Show immediately
+
+                this.state.quoteInterval = setInterval(() => {
+                    this.showRandomQuote();
+                }, this.settings.quoteInterval * 1000);
+            },
+
+            showRandomQuote() {
+                const quote = this.quotes[Math.floor(Math.random() * this.quotes.length)];
+                document.getElementById('quoteText').textContent = `"${quote.text}"`;
+                document.getElementById('quoteAuthor').textContent = `— ${quote.author}`;
+                document.getElementById('quoteContainer').style.display = 'block';
+            },
+
+            // ============================================
+            // Presets
+            // ============================================
+            defaultPresets: [
+                'Getting hot choccy ☕',
+                'Pissin 🚽',
+                'Smoke break 🚭',
+                'Lunch time 🍔',
+                'Quick stretch 🧘',
+                'Water break 💧'
+            ],
+
+            updatePresetButtons() {
+                const container = document.getElementById('presetButtons');
+                const allPresets = [...this.defaultPresets, ...this.settings.customPresets];
+
+                container.innerHTML = allPresets.map((preset, i) => {
+                    const shortcut = i < 9 ? ` (${i + 1})` : '';
+                    return `<button class="preset-btn" onclick="AFKApp.setReason('${preset.replace(/'/g, "\\'")}')" title="Keyboard: ${i + 1}">${preset}${shortcut ? `<span style="opacity: 0.5; font-size: 11px;">${shortcut}</span>` : ''}</button>`;
+                }).join('');
+            },
+
+            setReason(reason) {
+                document.getElementById('reasonInput').value = reason;
+                document.getElementById('reasonInput').focus();
+                this.updateSmartEstimatePreview();
+            },
+
+            addCustomPreset() {
+                const input = document.getElementById('newPresetInput');
+                const preset = input.value.trim();
+
+                if (preset && !this.settings.customPresets.includes(preset)) {
+                    this.settings.customPresets.push(preset);
+                    this.saveSettings();
+                    this.updatePresetButtons();
+                    this.updateCustomPresetsList();
+                    input.value = '';
+                }
+            },
+
+            removeCustomPreset(preset) {
+                this.settings.customPresets = this.settings.customPresets.filter(p => p !== preset);
+                this.saveSettings();
+                this.updatePresetButtons();
+                this.updateCustomPresetsList();
+            },
+
+            updateCustomPresetsList() {
+                const container = document.getElementById('customPresetsList');
+                container.innerHTML = this.settings.customPresets.map(preset => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 6px; margin-bottom: 8px;">
+                        <span>${preset}</span>
+                        <button class="btn btn-secondary" onclick="AFKApp.removeCustomPreset('${preset.replace(/'/g, "\\'")}')">Remove</button>
+                    </div>
+                `).join('');
+            },
+
+            // ============================================
+            // Theme
+            // ============================================
+            themes: [
+                { id: 'swirly', name: 'Swirly Sunset', preview: 'linear-gradient(135deg, #ff6b6b, #8a2be2)' },
+                { id: 'matrix', name: 'Matrix Rain', preview: 'linear-gradient(135deg, #0d0d0d, #00ff00)' },
+                { id: 'cyberpunk', name: 'Cyberpunk', preview: 'linear-gradient(135deg, #ff00ff, #00ffff)' },
+                { id: 'space', name: 'Space', preview: 'linear-gradient(135deg, #000428, #004e92)' },
+                { id: 'gradient', name: 'Chill Gradient', preview: 'linear-gradient(135deg, #667eea, #764ba2)' },
+            ],
+
+            updateThemeGrid() {
+                const container = document.getElementById('themeGrid');
+                container.innerHTML = this.themes.map(theme => `
+                    <div class="theme-card ${this.settings.theme === theme.id ? 'active' : ''}" onclick="AFKApp.setTheme('${theme.id}')">
+                        <div class="theme-preview" style="background: ${theme.preview};"></div>
+                        <div class="theme-name">${theme.name}</div>
+                    </div>
+                `).join('');
+            },
+
+            setTheme(themeId) {
+                this.settings.theme = themeId;
+                this.saveSettings();
+                document.body.className = `theme-${themeId}`;
+                if (this.settings.reduceMotion) document.body.classList.add('reduce-motion');
+                if (this.settings.highContrast) document.body.classList.add('high-contrast');
+                this.updateThemeGrid();
+            },
+
+            // ============================================
+            // Achievements
+            // ============================================
+            achievementDefinitions: [
+                { id: 'first_break', name: 'First Break', desc: 'Take your first AFK', icon: '🎉', unlock: (sessions) => sessions.length >= 1 },
+                { id: 'coffee_addict', name: 'Coffee Addict', desc: '10 coffee breaks', icon: '☕', unlock: (sessions) => sessions.filter(s => s.normalizedReason.includes('coffee') || s.normalizedReason.includes('choccy')).length >= 10 },
+                { id: 'night_owl', name: 'Night Owl', desc: 'AFK after midnight', icon: '🦉', unlock: (sessions) => sessions.some(s => new Date(s.startTime).getHours() >= 0 && new Date(s.startTime).getHours() < 6) },
+                { id: 'marathon', name: 'Marathon', desc: 'Single session over 1 hour', icon: '🏃', unlock: (sessions) => sessions.some(s => s.duration >= 3600) },
+                { id: 'hydration_hero', name: 'Hydration Hero', desc: '5 water breaks', icon: '💧', unlock: (sessions) => sessions.filter(s => s.normalizedReason.includes('water') || s.normalizedReason.includes('drink')).length >= 5 },
+                { id: 'consistent', name: 'Consistent', desc: 'AFK 7 days in a row', icon: '📅', unlock: (sessions) => AFKApp.checkConsecutiveDays(sessions) >= 7 },
+                { id: 'productive', name: 'Productive', desc: '50 total sessions', icon: '💪', unlock: (sessions) => sessions.length >= 50 },
+                { id: 'century', name: 'Century', desc: '100 total sessions', icon: '💯', unlock: (sessions) => sessions.length >= 100 },
+            ],
+
+            checkConsecutiveDays(sessions) {
+                if (sessions.length === 0) return 0;
+
+                const days = new Set();
+                sessions.forEach(s => {
+                    const date = new Date(s.startTime);
+                    days.add(date.toDateString());
+                });
+
+                const sortedDays = Array.from(days).sort();
+                let maxStreak = 1;
+                let currentStreak = 1;
+
+                for (let i = 1; i < sortedDays.length; i++) {
+                    const prev = new Date(sortedDays[i - 1]);
+                    const curr = new Date(sortedDays[i]);
+                    const diffDays = Math.floor((curr - prev) / (1000 * 60 * 60 * 24));
+
+                    if (diffDays === 1) {
+                        currentStreak++;
+                        maxStreak = Math.max(maxStreak, currentStreak);
+                    } else {
+                        currentStreak = 1;
+                    }
+                }
+
+                return maxStreak;
+            },
+
+            async checkAchievements() {
+                for (const achievement of this.achievementDefinitions) {
+                    const unlocked = achievement.unlock(this.sessions);
+
+                    if (unlocked && !this.achievements.includes(achievement.id)) {
+                        this.achievements.push(achievement.id);
+                        await this.saveAchievement(achievement.id);
+                        this.showNotification(`Achievement Unlocked! 🏆`, `${achievement.icon} ${achievement.name}`);
+                    }
+                }
+
+                this.updateAchievements();
+            },
+
+            async saveAchievement(id) {
+                if (!this.db) return;
+
+                const transaction = this.db.transaction(['achievements'], 'readwrite');
+                const store = transaction.objectStore('achievements');
+                store.put({ id, unlockedAt: Date.now() });
+            },
+
+            async loadAchievements() {
+                if (!this.db) return;
+
+                const transaction = this.db.transaction(['achievements'], 'readonly');
+                const store = transaction.objectStore('achievements');
+                const request = store.getAll();
+
+                return new Promise((resolve) => {
+                    request.onsuccess = () => {
+                        this.achievements = (request.result || []).map(a => a.id);
+                        resolve();
+                    };
+                    request.onerror = () => resolve();
+                });
+            },
+
+            updateAchievements() {
+                const container = document.getElementById('achievementGrid');
+                container.innerHTML = this.achievementDefinitions.map(achievement => {
+                    const unlocked = this.achievements.includes(achievement.id);
+                    return `
+                        <div class="achievement-card ${unlocked ? 'unlocked' : 'locked'}">
+                            <div class="achievement-icon">${achievement.icon}</div>
+                            <div class="achievement-name">${achievement.name}</div>
+                            <div class="achievement-desc">${achievement.desc}</div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            // ============================================
+            // Statistics
+            // ============================================
+            updateStatistics() {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const todaySessions = this.sessions.filter(s => s.startTime >= today.getTime());
+                const totalTime = this.sessions.reduce((sum, s) => sum + s.duration, 0);
+                const todayTime = todaySessions.reduce((sum, s) => sum + s.duration, 0);
+                const avgDuration = this.sessions.length > 0 ? totalTime / this.sessions.length : 0;
+                const longestSession = Math.max(...this.sessions.map(s => s.duration), 0);
+
+                document.getElementById('statsGrid').innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-value">${this.sessions.length}</div>
+                        <div class="stat-label">Total Sessions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${Math.floor(totalTime / 3600)}h</div>
+                        <div class="stat-label">Total Time</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${todaySessions.length}</div>
+                        <div class="stat-label">Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${Math.floor(todayTime / 60)}m</div>
+                        <div class="stat-label">Today's Time</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${Math.floor(avgDuration / 60)}m</div>
+                        <div class="stat-label">Avg Duration</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${Math.floor(longestSession / 60)}m</div>
+                        <div class="stat-label">Longest</div>
+                    </div>
+                `;
+
+                // Top reasons
+                const reasonCounts = {};
+                this.sessions.forEach(s => {
+                    reasonCounts[s.reason] = (reasonCounts[s.reason] || 0) + 1;
+                });
+
+                const topReasons = Object.entries(reasonCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5);
+
+                document.getElementById('topReasons').innerHTML = topReasons.length > 0 ? topReasons.map(([reason, count]) => `
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 6px; margin-bottom: 8px;">
+                        <span>${reason}</span>
+                        <span style="color: var(--primary-color); font-weight: 600;">${count}</span>
+                    </div>
+                `).join('') : '<div class="empty-state">No sessions yet</div>';
+            },
+
+            updateHistory(filter = 'all') {
+                let filtered = this.sessions;
+
+                if (filter === 'today') {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    filtered = this.sessions.filter(s => s.startTime >= today.getTime());
+                } else if (filter === 'week') {
+                    const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+                    filtered = this.sessions.filter(s => s.startTime >= weekAgo);
+                } else if (filter === 'month') {
+                    const monthAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+                    filtered = this.sessions.filter(s => s.startTime >= monthAgo);
+                }
+
+                // Sort by most recent
+                filtered.sort((a, b) => b.startTime - a.startTime);
+
+                const container = document.getElementById('historyList');
+
+                if (filtered.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <div>No sessions found</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = filtered.map(session => {
+                    const date = new Date(session.startTime);
+                    return `
+                        <div class="history-item">
+                            <div class="history-header">
+                                <div class="history-reason">${session.reason}</div>
+                                <div class="history-duration">${this.formatDuration(session.duration)}</div>
+                            </div>
+                            <div class="history-time">${date.toLocaleString()}</div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            // ============================================
+            // Analytics Charts
+            // ============================================
+            updateAnalytics() {
+                this.renderHourlyChart();
+                this.renderDurationChart();
+            },
+
+            renderHourlyChart() {
+                const hourCounts = new Array(24).fill(0);
+
+                this.sessions.forEach(session => {
+                    const hour = new Date(session.startTime).getHours();
+                    hourCounts[hour]++;
+                });
+
+                const maxCount = Math.max(...hourCounts, 1);
+                const container = document.getElementById('hourlyChart');
+
+                container.innerHTML = `
+                    <div style="display: flex; align-items: flex-end; justify-content: space-between; height: 180px; gap: 2px;">
+                        ${hourCounts.map((count, hour) => {
+                            const height = (count / maxCount) * 100;
+                            return `
+                                <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                                    <div style="width: 100%; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); height: ${height}%; border-radius: 4px 4px 0 0; position: relative;" title="${count} sessions at ${hour}:00">
+                                        ${count > 0 ? `<span style="position: absolute; top: -20px; font-size: 10px; color: var(--text-secondary);">${count}</span>` : ''}
+                                    </div>
+                                    <div style="font-size: 9px; color: var(--text-secondary); margin-top: 4px;">${hour}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div style="text-align: center; margin-top: 8px; font-size: 11px; color: var(--text-secondary);">Hour of Day</div>
+                `;
+            },
+
+            renderDurationChart() {
+                const buckets = {
+                    '0-5 min': 0,
+                    '5-15 min': 0,
+                    '15-30 min': 0,
+                    '30-60 min': 0,
+                    '1+ hours': 0
+                };
+
+                this.sessions.forEach(session => {
+                    const minutes = session.duration / 60;
+                    if (minutes < 5) buckets['0-5 min']++;
+                    else if (minutes < 15) buckets['5-15 min']++;
+                    else if (minutes < 30) buckets['15-30 min']++;
+                    else if (minutes < 60) buckets['30-60 min']++;
+                    else buckets['1+ hours']++;
+                });
+
+                const total = this.sessions.length || 1;
+                const container = document.getElementById('durationChart');
+
+                container.innerHTML = Object.entries(buckets).map(([label, count]) => {
+                    const percentage = (count / total) * 100;
+                    return `
+                        <div style="margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="font-size: 13px;">${label}</span>
+                                <span style="font-size: 13px; color: var(--primary-color); font-weight: 600;">${count} (${percentage.toFixed(1)}%)</span>
+                            </div>
+                            <div style="width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden;">
+                                <div style="width: ${percentage}%; height: 100%; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)); transition: width 0.3s ease;"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            // ============================================
+            // Social Sharing
+            // ============================================
+            shareToTwitter() {
+                const stats = this.getShareableStats();
+                const text = `I've been AFK for ${stats.totalSessions} sessions (${stats.totalTime})! Track your breaks with AFK Tracker 😴`;
+                const url = window.location.href;
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+            },
+
+            shareToDiscord() {
+                const stats = this.getShareableStats();
+                const message = `**AFK Tracker Stats** 😴\n\n📊 Total Sessions: ${stats.totalSessions}\n⏱️ Total Time: ${stats.totalTime}\n🎯 Most Used: ${stats.topReason}\n📅 Current Streak: ${stats.streak} days\n\n${window.location.href}`;
+
+                navigator.clipboard.writeText(message);
+                this.showNotification('Copied to Clipboard!', 'Paste this in Discord to share your stats');
+            },
+
+            generateStatusCard() {
+                const stats = this.getShareableStats();
+                const canvas = document.createElement('canvas');
+                canvas.width = 1200;
+                canvas.height = 630;
+                const ctx = canvas.getContext('2d');
+
+                // Background gradient
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                gradient.addColorStop(0, '#1a1a2e');
+                gradient.addColorStop(0.5, '#16213e');
+                gradient.addColorStop(1, '#0f3460');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Title
+                ctx.fillStyle = '#ff6b6b';
+                ctx.font = 'bold 72px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('AFK Tracker Stats 😴', canvas.width / 2, 120);
+
+                // Stats
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '48px sans-serif';
+                let y = 240;
+                const statLines = [
+                    `📊 Total Sessions: ${stats.totalSessions}`,
+                    `⏱️ Total Time: ${stats.totalTime}`,
+                    `🎯 Most Used: ${stats.topReason}`,
+                    `📅 Streak: ${stats.streak} days`
+                ];
+
+                statLines.forEach(line => {
+                    ctx.fillText(line, canvas.width / 2, y);
+                    y += 80;
+                });
+
+                // Footer
+                ctx.fillStyle = '#888';
+                ctx.font = '32px sans-serif';
+                ctx.fillText('Track your breaks at afk-tracker.app', canvas.width / 2, 580);
+
+                // Download
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'afk-stats.png';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    this.showNotification('Status Card Generated!', 'Image downloaded successfully');
+                });
+            },
+
+            getShareableStats() {
+                const totalSessions = this.sessions.length;
+                const totalTime = this.sessions.reduce((sum, s) => sum + s.duration, 0);
+                const hours = Math.floor(totalTime / 3600);
+                const minutes = Math.floor((totalTime % 3600) / 60);
+
+                // Top reason
+                const reasonCounts = {};
+                this.sessions.forEach(s => {
+                    reasonCounts[s.reason] = (reasonCounts[s.reason] || 0) + 1;
+                });
+                const topReason = Object.entries(reasonCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'None';
+
+                // Streak
+                const streak = this.checkConsecutiveDays(this.sessions);
+
+                return {
+                    totalSessions,
+                    totalTime: `${hours}h ${minutes}m`,
+                    topReason,
+                    streak
+                };
+            },
+
+            // ============================================
+            // Profiles
+            // ============================================
+            updateProfileSelector() {
+                const container = document.getElementById('profileSelector');
+                container.innerHTML = this.profiles.map(profile => `
+                    <button class="profile-btn ${this.state.currentProfile === profile ? 'active' : ''}" onclick="AFKApp.switchProfile('${profile}')">
+                        ${profile}
+                    </button>
+                `).join('');
+
+                this.updateProfilesList();
+            },
+
+            updateProfilesList() {
+                const container = document.getElementById('profilesList');
+                container.innerHTML = this.profiles.map(profile => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 6px; margin-bottom: 8px;">
+                        <span>${profile} ${this.state.currentProfile === profile ? '(Active)' : ''}</span>
+                        ${profile !== 'default' ? `<button class="btn btn-secondary" onclick="AFKApp.deleteProfile('${profile}')">Delete</button>` : ''}
+                    </div>
+                `).join('');
+            },
+
+            async switchProfile(profile) {
+                this.state.currentProfile = profile;
+                await this.loadSessions();
+                await this.loadAchievements();
+                this.updateProfileSelector();
+            },
+
+            addProfile() {
+                const input = document.getElementById('newProfileInput');
+                const name = input.value.trim();
+
+                if (name && !this.profiles.includes(name)) {
+                    this.profiles.push(name);
+                    this.saveSettings();
+                    this.updateProfileSelector();
+                    input.value = '';
+                }
+            },
+
+            deleteProfile(profile) {
+                if (profile === 'default') return;
+
+                if (confirm(`Delete profile "${profile}"? This will remove all its data.`)) {
+                    this.profiles = this.profiles.filter(p => p !== profile);
+                    if (this.state.currentProfile === profile) {
+                        this.switchProfile('default');
+                    }
+                    this.saveSettings();
+                    this.updateProfileSelector();
+                }
+            },
+
+            // ============================================
+            // Notifications & Sounds
+            // ============================================
+            async requestNotificationPermission() {
+                if ('Notification' in window) {
+                    const permission = await Notification.requestPermission();
+                    if (permission === 'granted') {
+                        this.showNotification('Notifications Enabled!', 'You will now receive break reminders');
+                    }
+                }
+            },
+
+            showNotification(title, message) {
+                // In-app notification
+                const notif = document.createElement('div');
+                notif.className = 'notification';
+                notif.innerHTML = `
+                    <div class="notification-title">${title}</div>
+                    <div class="notification-message">${message}</div>
+                `;
+                document.body.appendChild(notif);
+
+                setTimeout(() => {
+                    notif.remove();
+                }, 4000);
+
+                // Desktop notification
+                if (this.settings.notifications && 'Notification' in window && Notification.permission === 'granted') {
+                    new Notification(title, { body: message, icon: '/favicon.ico' });
+                }
+            },
+
+            playSound(type) {
+                // Simple beep using Web Audio API
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                oscillator.frequency.value = type === 'whoosh' ? 440 : 880;
+                oscillator.type = 'sine';
+
+                gainNode.gain.setValueAtTime(this.settings.volume / 100, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            },
+
+            // ============================================
+            // Pomodoro
+            // ============================================
+            startPomodoroTimer() {
+                if (this.state.pomodoroTimer) {
+                    clearInterval(this.state.pomodoroTimer);
+                }
+
+                let workTime = this.settings.pomodoroWork * 60;
+                let isWorking = true;
+
+                this.state.pomodoroTimer = setInterval(() => {
+                    workTime--;
+
+                    if (workTime <= 0) {
+                        if (isWorking) {
+                            this.showNotification('Break Time! 🎉', `You've worked for ${this.settings.pomodoroWork} minutes. Take a ${this.settings.pomodoroBreak} minute break!`);
+                            workTime = this.settings.pomodoroBreak * 60;
+                            isWorking = false;
+                        } else {
+                            this.showNotification('Back to Work! 💪', `Break's over. Time for another ${this.settings.pomodoroWork} minute session!`);
+                            workTime = this.settings.pomodoroWork * 60;
+                            isWorking = true;
+                        }
+                    }
+                }, 1000);
+            },
+
+            // ============================================
+            // Data Export/Import
+            // ============================================
+            async exportData() {
+                const data = {
+                    version: 1,
+                    exportDate: Date.now(),
+                    settings: this.settings,
+                    sessions: this.sessions,
+                    achievements: this.achievements,
+                    profiles: this.profiles,
+                };
+
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `afk-tracker-export-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                this.showNotification('Data Exported!', 'Your AFK data has been downloaded');
+            },
+
+            async importData() {
+                const input = document.getElementById('importInput');
+                const file = input.files[0];
+
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+
+                        // Validate
+                        if (!data.version || !data.sessions) {
+                            throw new Error('Invalid file format');
+                        }
+
+                        // Import settings
+                        if (data.settings) {
+                            this.settings = { ...this.settings, ...data.settings };
+                            await this.saveSettings();
+                            this.applySettings();
+                        }
+
+                        // Import sessions
+                        if (data.sessions) {
+                            for (const session of data.sessions) {
+                                await this.saveSession(session);
+                            }
+                        }
+
+                        // Import achievements
+                        if (data.achievements) {
+                            this.achievements = data.achievements;
+                        }
+
+                        // Import profiles
+                        if (data.profiles) {
+                            this.profiles = data.profiles;
+                        }
+
+                        this.showNotification('Import Complete!', `Imported ${data.sessions.length} sessions`);
+                        this.updateStatistics();
+                        this.updateHistory();
+                        this.updateAchievements();
+
+                    } catch (err) {
+                        alert('Import failed: ' + err.message);
+                    }
+                };
+
+                reader.readAsText(file);
+            },
+
+            async clearAllData() {
+                if (!confirm('Are you sure you want to delete ALL data? This cannot be undone!')) {
+                    return;
+                }
+
+                if (!confirm('Really delete everything? Last chance!')) {
+                    return;
+                }
+
+                // Clear IndexedDB
+                if (this.db) {
+                    const transaction = this.db.transaction(['sessions', 'settings', 'achievements'], 'readwrite');
+                    transaction.objectStore('sessions').clear();
+                    transaction.objectStore('settings').clear();
+                    transaction.objectStore('achievements').clear();
+                }
+
+                // Reset state
+                this.sessions = [];
+                this.achievements = [];
+                this.settings = {
+                    theme: 'swirly',
+                    customBgImage: null,
+                    primaryColor: '#ff6b6b',
+                    animationSpeed: 1,
+                    statusEmoji: '😴',
+                    autoFullscreen: true,
+                    wakeLock: false,
+                    showQuotes: true,
+                    quoteInterval: 30,
+                    notifications: false,
+                    sounds: false,
+                    volume: 50,
+                    pomodoro: false,
+                    pomodoroWork: 25,
+                    pomodoroBreak: 5,
+                    customPresets: [],
+                    reduceMotion: false,
+                    highContrast: false,
+                    fontSize: 'medium',
+                };
+
+                this.applySettings();
+                this.updateStatistics();
+                this.updateHistory();
+                this.updateAchievements();
+
+                this.showNotification('Data Cleared', 'All data has been deleted');
+            },
+
+            // ============================================
+            // Sharing & QR Code
+            // ============================================
+            shareStatus() {
+                const url = new URL(window.location.href);
+                url.searchParams.set('reason', this.state.currentReason || 'AFK');
+                url.searchParams.set('auto', 'true');
+
+                navigator.clipboard.writeText(url.toString());
+                this.showNotification('Link Copied!', 'Share link copied to clipboard');
+            },
+
+            showQRCode() {
+                const url = window.location.href;
+                const qrContainer = document.getElementById('qrCode');
+
+                // Simple QR code using qr-code-generator API
+                qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}" alt="QR Code">`;
+
+                this.openModal('qrModal');
+            },
+
+            // ============================================
+            // URL Parameters
+            // ============================================
+            handleURLParams() {
+                const params = new URLSearchParams(window.location.search);
+
+                // Widget mode
+                if (params.get('widget') === 'true') {
+                    document.body.classList.add('widget-mode');
+                }
+
+                // Auto-start AFK
+                if (params.get('auto') === 'true') {
+                    const reason = params.get('reason') || 'AFK';
+                    const duration = params.get('duration');
+
+                    document.getElementById('reasonInput').value = reason;
+
+                    if (duration) {
+                        document.querySelector('input[value="countdown"]').checked = true;
+                        document.getElementById('countdownInput').value = duration;
+                    }
+
+                    // Auto-start after short delay
+                    setTimeout(() => {
+                        this.goAFK();
+                    }, 1000);
+                }
+            },
+
+            // ============================================
+            // Matrix Effect
+            // ============================================
+            initMatrixEffect() {
+                const canvas = document.getElementById('matrixCanvas');
+                const ctx = canvas.getContext('2d');
+
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+
+                const columns = Math.floor(canvas.width / 20);
+                const drops = Array(columns).fill(1);
+
+                const draw = () => {
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    ctx.fillStyle = '#0f0';
+                    ctx.font = '15px monospace';
+
+                    for (let i = 0; i < drops.length; i++) {
+                        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+                        ctx.fillText(text, i * 20, drops[i] * 20);
+
+                        if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
+                            drops[i] = 0;
+                        }
+                        drops[i]++;
+                    }
+                };
+
+                setInterval(draw, 33);
+
+                window.addEventListener('resize', () => {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                });
+            },
+
+            // ============================================
+            // Service Worker (PWA)
+            // ============================================
+            async registerServiceWorker() {
+                if ('serviceWorker' in navigator) {
+                    try {
+                        const registration = await navigator.serviceWorker.register('./service-worker.js');
+                        console.log('✅ Service Worker registered successfully:', registration.scope);
+
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    this.showNotification('Update Available!', 'Reload the page to get the latest version');
+                                }
+                            });
+                        });
+                    } catch (error) {
+                        console.log('Service Worker registration failed:', error);
+                    }
+                }
+            },
+
+            // ============================================
+            // Touch Gestures
+            // ============================================
+            setupTouchGestures() {
+                let touchStartX = 0;
+                let touchStartY = 0;
+                let touchEndX = 0;
+                let touchEndY = 0;
+
+                const minSwipeDistance = 50;
+
+                document.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                    touchStartY = e.changedTouches[0].screenY;
+                }, { passive: true });
+
+                document.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    touchEndY = e.changedTouches[0].screenY;
+                    this.handleGesture();
+                }, { passive: true });
+
+                this.handleGesture = () => {
+                    const diffX = touchEndX - touchStartX;
+                    const diffY = touchEndY - touchStartY;
+
+                    // Swipe right to go back when AFK
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > minSwipeDistance) {
+                        if (diffX > 0 && this.state.isAFK) {
+                            // Swipe right - return from AFK
+                            this.backFromAFK();
+                        }
+                    }
+
+                    // Swipe down to close modals
+                    if (Math.abs(diffY) > Math.abs(diffX) && diffY > minSwipeDistance) {
+                        const activeModal = document.querySelector('.modal.active');
+                        if (activeModal) {
+                            activeModal.classList.remove('active');
+                        }
+                    }
+                };
+            },
+
+            // ============================================
+            // Event Listeners
+            // ============================================
+            setupEventListeners() {
+                // Setup touch gestures
+                this.setupTouchGestures();
+
+                // Go AFK
+                document.getElementById('goAfkBtn').addEventListener('click', () => this.goAFK());
+                document.getElementById('backBtn').addEventListener('click', () => this.backFromAFK());
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    // Escape - return from AFK
+                    if (e.key === 'Escape' && this.state.isAFK) {
+                        this.backFromAFK();
+                    }
+
+                    // Enter - go AFK
+                    if (e.key === 'Enter' && !this.state.isAFK && document.activeElement.id === 'reasonInput') {
+                        this.goAFK();
+                    }
+
+                    // 1-9 - preset buttons
+                    if (!this.state.isAFK && e.key >= '1' && e.key <= '9') {
+                        const index = parseInt(e.key) - 1;
+                        const allPresets = [...this.defaultPresets, ...this.settings.customPresets];
+                        if (allPresets[index]) {
+                            this.setReason(allPresets[index]);
+                        }
+                    }
+
+                    // S - settings (when not in input)
+                    if (e.key === 's' && !this.state.isAFK && document.activeElement.tagName !== 'INPUT') {
+                        this.openModal('settingsModal');
+                    }
+
+                    // H - history
+                    if (e.key === 'h' && !this.state.isAFK && document.activeElement.tagName !== 'INPUT') {
+                        this.openModal('historyModal');
+                        this.updateStatistics();
+                        this.updateHistory();
+                    }
+                });
+
+                // Modal buttons
+                document.getElementById('settingsBtn').addEventListener('click', () => {
+                    this.openModal('settingsModal');
+                });
+
+                document.getElementById('historyBtn').addEventListener('click', () => {
+                    this.openModal('historyModal');
+                    this.updateStatistics();
+                    this.updateHistory();
+                    this.updateAnalytics();
+                });
+
+                document.getElementById('achievementsBtn').addEventListener('click', () => {
+                    this.openModal('achievementsModal');
+                });
+
+                document.getElementById('profileBtn').addEventListener('click', () => {
+                    this.openModal('profilesModal');
+                });
+
+                // Settings
+                document.getElementById('primaryColorInput').addEventListener('change', (e) => {
+                    this.settings.primaryColor = e.target.value;
+                    document.documentElement.style.setProperty('--primary-color', e.target.value);
+                    this.saveSettings();
+                });
+
+                document.getElementById('animSpeedInput').addEventListener('input', (e) => {
+                    this.settings.animationSpeed = parseFloat(e.target.value);
+                    document.documentElement.style.setProperty('--animation-speed', e.target.value);
+                    document.getElementById('animSpeedValue').textContent = parseFloat(e.target.value).toFixed(1);
+                    this.saveSettings();
+                });
+
+                document.getElementById('statusEmojiInput').addEventListener('change', (e) => {
+                    this.settings.statusEmoji = e.target.value || '😴';
+                    this.saveSettings();
+                });
+
+                document.getElementById('autoFullscreenToggle').addEventListener('change', (e) => {
+                    this.settings.autoFullscreen = e.target.checked;
+                    this.saveSettings();
+                });
+
+                document.getElementById('wakeLockToggle').addEventListener('change', (e) => {
+                    this.settings.wakeLock = e.target.checked;
+                    this.saveSettings();
+                });
+
+                document.getElementById('quotesToggle').addEventListener('change', (e) => {
+                    this.settings.showQuotes = e.target.checked;
+                    this.saveSettings();
+                });
+
+                document.getElementById('quoteIntervalInput').addEventListener('change', (e) => {
+                    this.settings.quoteInterval = parseInt(e.target.value) || 30;
+                    this.saveSettings();
+                });
+
+                document.getElementById('notificationsToggle').addEventListener('change', (e) => {
+                    this.settings.notifications = e.target.checked;
+                    this.saveSettings();
+                });
+
+                document.getElementById('requestNotifBtn').addEventListener('click', () => {
+                    this.requestNotificationPermission();
+                });
+
+                document.getElementById('soundsToggle').addEventListener('change', (e) => {
+                    this.settings.sounds = e.target.checked;
+                    this.saveSettings();
+                });
+
+                document.getElementById('volumeInput').addEventListener('input', (e) => {
+                    this.settings.volume = parseInt(e.target.value);
+                    this.saveSettings();
+                });
+
+                document.getElementById('pomodoroToggle').addEventListener('change', (e) => {
+                    this.settings.pomodoro = e.target.checked;
+                    this.saveSettings();
+                    if (e.target.checked) {
+                        this.startPomodoroTimer();
+                    } else if (this.state.pomodoroTimer) {
+                        clearInterval(this.state.pomodoroTimer);
+                    }
+                });
+
+                document.getElementById('pomodoroWorkInput').addEventListener('change', (e) => {
+                    this.settings.pomodoroWork = parseInt(e.target.value) || 25;
+                    this.saveSettings();
+                });
+
+                document.getElementById('pomodoroBreakInput').addEventListener('change', (e) => {
+                    this.settings.pomodoroBreak = parseInt(e.target.value) || 5;
+                    this.saveSettings();
+                });
+
+                document.getElementById('reduceMotionToggle').addEventListener('change', (e) => {
+                    this.settings.reduceMotion = e.target.checked;
+                    if (e.target.checked) {
+                        document.body.classList.add('reduce-motion');
+                    } else {
+                        document.body.classList.remove('reduce-motion');
+                    }
+                    this.saveSettings();
+                });
+
+                document.getElementById('highContrastToggle').addEventListener('change', (e) => {
+                    this.settings.highContrast = e.target.checked;
+                    if (e.target.checked) {
+                        document.body.classList.add('high-contrast');
+                    } else {
+                        document.body.classList.remove('high-contrast');
+                    }
+                    this.saveSettings();
+                });
+
+                // Custom presets
+                document.getElementById('addPresetBtn').addEventListener('click', () => this.addCustomPreset());
+                document.getElementById('newPresetInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.addCustomPreset();
+                });
+
+                // Background upload
+                document.getElementById('bgImageInput').addEventListener('change', async (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            this.settings.customBgImage = event.target.result;
+                            this.settings.theme = 'custom';
+                            this.saveSettings();
+                            this.applySettings();
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                document.getElementById('removeBgBtn').addEventListener('click', () => {
+                    this.settings.customBgImage = null;
+                    this.settings.theme = 'swirly';
+                    this.saveSettings();
+                    this.applySettings();
+                });
+
+                // Data management
+                document.getElementById('exportBtn').addEventListener('click', () => this.exportData());
+                document.getElementById('importBtn').addEventListener('click', () => this.importData());
+                document.getElementById('clearDataBtn').addEventListener('click', () => this.clearAllData());
+                document.getElementById('shareBtn').addEventListener('click', () => this.shareStatus());
+                document.getElementById('qrBtn').addEventListener('click', () => this.showQRCode());
+
+                // Social sharing
+                document.getElementById('shareTwitterBtn').addEventListener('click', () => this.shareToTwitter());
+                document.getElementById('shareDiscordBtn').addEventListener('click', () => this.shareToDiscord());
+                document.getElementById('generateCardBtn').addEventListener('click', () => this.generateStatusCard());
+
+                // Profiles
+                document.getElementById('addProfileBtn').addEventListener('click', () => this.addProfile());
+                document.getElementById('newProfileInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.addProfile();
+                });
+
+                // History filter
+                document.getElementById('historyFilterSelect').addEventListener('change', (e) => {
+                    this.updateHistory(e.target.value);
+                });
+
+                // Timer mode selection
+                document.querySelectorAll('.timer-mode-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        document.querySelectorAll('.timer-mode-option').forEach(o => o.classList.remove('active'));
+                        this.classList.add('active');
+                        const radio = this.querySelector('input[type="radio"]');
+                        radio.checked = true;
+
+                        // Update estimate preview for smart mode
+                        if (radio.value === 'smart') {
+                            AFKApp.updateSmartEstimatePreview();
+                        }
+                    });
+                });
+
+                // Update smart estimate when reason changes
+                document.getElementById('reasonInput').addEventListener('input', () => {
+                    if (document.querySelector('input[value="smart"]').checked) {
+                        this.updateSmartEstimatePreview();
+                    }
+                });
+            },
+
+            // ============================================
+            // Tabs
+            // ============================================
+            setupTabs() {
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        const parent = this.closest('.modal-content');
+                        const tabName = this.dataset.tab;
+
+                        // Update active tab
+                        parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+
+                        // Update active content
+                        parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                        parent.querySelector(`[data-content="${tabName}"]`).classList.add('active');
+                    });
+                });
+            },
+
+            // ============================================
+            // Modal
+            // ============================================
+            openModal(id) {
+                document.getElementById(id).classList.add('active');
+
+                // Special handling
+                if (id === 'settingsModal') {
+                    this.updateCustomPresetsList();
+                }
+            },
+
+            closeModal(id) {
+                document.getElementById(id).classList.remove('active');
+            },
+
+            // ============================================
+            // Utility
+            // ============================================
+            formatDate(timestamp) {
+                const date = new Date(timestamp);
+                return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+            },
+        };
+
+        // ============================================
+        // Initialize on load
+        // ============================================
+        window.addEventListener('DOMContentLoaded', () => {
+            AFKApp.init();
         });
 
-        setInterval(updateTimer, 1000);
+        // Expose for inline handlers
+        window.AFKApp = AFKApp;
     </script>
 </body>
 
