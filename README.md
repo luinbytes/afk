@@ -106,13 +106,13 @@
 ## Quick Start
 
 ### Option 1: GitHub Pages (Recommended)
-1. Visit the live demo: *[[AFK.app](https://luinbytes.github.io/afk/)]*
+1. Visit the live demo: [AFK.app](https://luinbytes.github.io/afk/)
 2. Start using immediately - no installation needed!
 
 ### Option 2: Local Development
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/afk.git
+git clone https://github.com/luinbytes/afk.git
 cd afk
 
 # Open in browser
