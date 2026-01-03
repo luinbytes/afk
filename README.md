@@ -230,8 +230,8 @@ MIT License - feel free to use, modify, and distribute!
 
 ---
 
-**Made with 😴 by [Your Name]**
+**Made with 😴 by luinbytes**
 
 🌟 Star this repo if you find it useful!
-🐛 [Report bugs](https://github.com/yourusername/afk/issues)
-💡 [Suggest features](https://github.com/yourusername/afk/issues)
+🐛 [Report bugs](https://github.com/luinbytes/afk/issues)
+💡 [Suggest features](https://github.com/luinbytes/afk/issues)
