@@ -1771,6 +1771,10 @@
                 return new Promise((resolve) => {
                     request.onsuccess = () => {
                         this.sessions = request.result || [];
+                        // #region agent log
+                        const sessionStartTimes = this.sessions.map(s => ({startTime:s.startTime,startTimeDate:new Date(s.startTime).toISOString(),startTimeHours:new Date(s.startTime).getHours(),type:typeof s.startTime}));
+                        fetch('http://127.0.0.1:7242/ingest/44093b19-3f5c-4b12-bc96-15ef9d9dce40',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'index.html:1773',message:'loadSessions: sessions loaded',data:{sessionsCount:this.sessions.length,sessions:sessionStartTimes},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+                        // #endregion
                         resolve();
                     };
                     request.onerror = () => {
@@ -1797,7 +1801,7 @@
                 return new Promise((resolve) => {
                     transaction.oncomplete = async () => {
                         await this.loadSessions();
-                        await this.checkAchievements();
+                        await this.checkAchievements(sessionData);
                         resolve();
                     };
                 });
@@ -1992,6 +1996,9 @@
                 this.state.timerMode = timerMode;
                 this.state.isAFK = true;
                 this.state.startTime = Date.now();
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/44093b19-3f5c-4b12-bc96-15ef9d9dce40',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'index.html:1994',message:'goAFK: startTime set',data:{startTime:this.state.startTime,startTimeDate:new Date(this.state.startTime).toISOString(),startTimeHours:new Date(this.state.startTime).getHours(),currentTime:Date.now()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+                // #endregion
 
                 // Get countdown value if in countdown mode
                 if (timerMode === 'countdown') {
@@ -2041,6 +2048,10 @@
             async backFromAFK() {
                 const endTime = Date.now();
                 const duration = Math.floor((endTime - this.state.startTime) / 1000); // in seconds
+
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/44093b19-3f5c-4b12-bc96-15ef9d9dce40',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'index.html:2041',message:'backFromAFK: before saveSession',data:{startTime:this.state.startTime,startTimeDate:new Date(this.state.startTime).toISOString(),startTimeHours:new Date(this.state.startTime).getHours(),endTime:endTime,endTimeDate:new Date(endTime).toISOString(),endTimeHours:new Date(endTime).getHours(),duration:duration},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+                // #endregion
 
                 // Save session
                 await this.saveSession({
@@ -2346,7 +2357,27 @@
             achievementDefinitions: [
                 { id: 'first_break', name: 'First Break', desc: 'Take your first AFK', icon: '🎉', unlock: (sessions) => sessions.length >= 1 },
                 { id: 'coffee_addict', name: 'Coffee Addict', desc: '10 coffee breaks', icon: '☕', unlock: (sessions) => sessions.filter(s => s.normalizedReason.includes('coffee') || s.normalizedReason.includes('choccy')).length >= 10 },
-                { id: 'night_owl', name: 'Night Owl', desc: 'AFK after midnight', icon: '🦉', unlock: (sessions) => sessions.some(s => new Date(s.startTime).getHours() >= 0 && new Date(s.startTime).getHours() < 6) },
+                { id: 'night_owl', name: 'Night Owl', desc: 'AFK after midnight', icon: '🦉', unlock: (sessions, newSession) => {
+                    // #region agent log
+                    const sessionToCheck = newSession || (sessions.length > 0 ? sessions[sessions.length - 1] : null);
+                    let result = false;
+                    if (sessionToCheck) {
+                        const startTime = sessionToCheck.startTime;
+                        const date = new Date(startTime);
+                        const hours = date.getHours();
+                        const utcHours = date.getUTCHours();
+                        const localTimeString = date.toLocaleString();
+                        const utcTimeString = date.toUTCString();
+                        const timezoneOffset = date.getTimezoneOffset();
+                        result = hours >= 0 && hours < 6;
+                        const now = new Date();
+                        fetch('http://127.0.0.1:7242/ingest/44093b19-3f5c-4b12-bc96-15ef9d9dce40',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'index.html:2349',message:'night_owl unlock check',data:{checkingNewSession:!!newSession,startTime,startTimeDate:date.toISOString(),hours,utcHours,localTimeString,utcTimeString,timezoneOffset,matches:result,currentTime:Date.now(),currentTimeDate:now.toISOString(),currentTimeHours:now.getHours(),currentUTCHours:now.getUTCHours(),currentLocalTimeString:now.toLocaleString(),timezoneOffset:now.getTimezoneOffset()},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'E'})}).catch(()=>{});
+                    }
+                    // #endregion
+                    if (!sessionToCheck) return false;
+                    const hours = new Date(sessionToCheck.startTime).getHours();
+                    return hours >= 0 && hours < 6;
+                } },
                 { id: 'marathon', name: 'Marathon', desc: 'Single session over 1 hour', icon: '🏃', unlock: (sessions) => sessions.some(s => s.duration >= 3600) },
                 { id: 'hydration_hero', name: 'Hydration Hero', desc: '5 water breaks', icon: '💧', unlock: (sessions) => sessions.filter(s => s.normalizedReason.includes('water') || s.normalizedReason.includes('drink')).length >= 5 },
                 { id: 'consistent', name: 'Consistent', desc: 'AFK 7 days in a row', icon: '📅', unlock: (sessions) => AFKApp.checkConsecutiveDays(sessions) >= 7 },
@@ -2383,11 +2414,30 @@
                 return maxStreak;
             },
 
-            async checkAchievements() {
+            async checkAchievements(newSession = null) {
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/44093b19-3f5c-4b12-bc96-15ef9d9dce40',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'index.html:2386',message:'checkAchievements: entry',data:{sessionsCount:this.sessions.length,currentTime:Date.now(),currentTimeDate:new Date().toISOString(),currentTimeHours:new Date().getHours(),hasNewSession:!!newSession},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
+                // #endregion
                 for (const achievement of this.achievementDefinitions) {
-                    const unlocked = achievement.unlock(this.sessions);
+                    // #region agent log
+                    if(achievement.id === 'night_owl') {
+                        const sessionStartTimes = this.sessions.map(s => ({startTime:s.startTime,startTimeDate:new Date(s.startTime).toISOString(),startTimeHours:new Date(s.startTime).getHours(),type:typeof s.startTime}));
+                        fetch('http://127.0.0.1:7242/ingest/44093b19-3f5c-4b12-bc96-15ef9d9dce40',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'index.html:2387',message:'checkAchievements: night_owl before unlock check',data:{sessions:sessionStartTimes,newSessionStartTime:newSession?.startTime,newSessionStartTimeHours:newSession ? new Date(newSession.startTime).getHours() : null},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
+                    }
+                    // #endregion
+                    const unlocked = achievement.unlock(this.sessions, newSession);
+                    // #region agent log
+                    if(achievement.id === 'night_owl') {
+                        fetch('http://127.0.0.1:7242/ingest/44093b19-3f5c-4b12-bc96-15ef9d9dce40',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'index.html:2388',message:'checkAchievements: night_owl unlock result',data:{unlocked:unlocked,alreadyUnlocked:this.achievements.includes(achievement.id)},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
+                    }
+                    // #endregion
 
                     if (unlocked && !this.achievements.includes(achievement.id)) {
+                        // #region agent log
+                        if(achievement.id === 'night_owl') {
+                            fetch('http://127.0.0.1:7242/ingest/44093b19-3f5c-4b12-bc96-15ef9d9dce40',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'index.html:2390',message:'checkAchievements: night_owl unlocking',data:{achievementId:achievement.id},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
+                        }
+                        // #endregion
                         this.achievements.push(achievement.id);
                         await this.saveAchievement(achievement.id);
                         this.showNotification(`Achievement Unlocked! 🏆`, `${achievement.icon} ${achievement.name}`);
